@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #d37420, #bc26e9); color: white; border-radius: 15px;">
+    <div class="card-body p-4">
+        <h4>नमस्ते, भाई साहब! 🙏</h4>
+        <p class="mb-0 opacity-75">शिवराजपुर में आज आप क्या ढूंढ रहे हैं?</p>
+    </div>
+</div>
+
+<!-- <div class="input-group shadow-sm mb-4 rounded-pill overflow-hidden bg-white">
+    <span class="input-group-text border-0 bg-white ps-3"><i class="fas fa-search text-muted"></i></span>
+    <input type="text" class="form-control border-0 py-3" placeholder="ट्रैक्टर, मिस्त्री, डॉक्टर...">
+    <span class="input-group-text border-0 bg-white pe-3"><i class="fas fa-microphone text-success"></i></span>
+</div> -->
+
+<form action="{% url 'search' %}" method="GET" class="mb-4">
+    <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white">
+        <span class="input-group-text border-0 bg-white ps-3">
+            <i class="fas fa-search text-muted"></i>
+        </span>
+        <input type="text" name="q" class="form-control border-0 py-3" placeholder="ट्रैक्टर, मिस्त्री, डॉक्टर..." required>
+        <button type="submit" class="input-group-text border-0 bg-white pe-3" style="cursor: pointer;">
+            <i class="fas fa-arrow-right text-success"></i>
+        </button>
+    </div>
+</form>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="fw-bold m-0 text-secondary">सेवाएं (Services)</h6>
+    <a href="#" class="text-success text-decoration-none small fw-bold">सभी देखें</a>
+</div>
+
+<div class="row g-3">
+    {% for cat in categories %}
+<div class="col-4 col-md-3 text-center">
+    <a href="{% url 'service_list' cat.slug %}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm h-100 py-3" style="border-radius: 15px;">
+            <div class="card-body p-2">
+                {% if cat.icon %}
+                    <img src="{{ cat.icon.url }}" ... (wahi same code) ...>
+                {% else %}
+                    <i class="fas fa-tools ..."></i>
+                {% endif %}
+                <h6 class="card-title small fw-bold mb-0 text-dark">{{ cat.name }}</h6>
+            </div>
+        </div>
+    </a> </div>
+{% endfor %}
+</div>
+
+<div class="mt-4">
+    <h6 class="fw-bold mb-3 text-secondary">महत्वपूर्ण योजनाएं</h6>
+    <div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center" style="border-radius: 12px;">
+        <div class="bg-warning text-white rounded p-3 me-3">
+            <i class="fas fa-female fa-lg"></i>
+        </div>
+        <div>
+            <h6 class="mb-1 fw-bold">लाड़ली बहना योजना</h6>
+            <small class="text-muted">पात्रता और आवेदन की जानकारी</small>
+        </div>
+    </div>
+    <div class="card border-0 shadow-sm mt-4 text-white" style="background: linear-gradient(45deg, #11998e, #38ef7d); border-radius: 15px;">
+    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+        <div>
+            <h6 class="fw-bold mb-1">काम चाहिए?</h6>
+            <p class="small mb-2 opacity-90">अपनी दुकान या सर्विस रजिस्टर करें और ग्राहक पाएं.</p>
+            <a href="{% url 'register_provider' %}" class="btn btn-light btn-sm rounded-pill text-success fw-bold px-3 shadow-sm">
+                अभी रजिस्टर करें <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div style="font-size: 3rem; opacity: 0.8;">
+            <i class="fas fa-handshake"></i>
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock %}

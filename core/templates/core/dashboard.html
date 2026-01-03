@@ -1,0 +1,136 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container-fluid py-4" style="background-color: #f8f9fa;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">📊 GramYog Analytics</h2>
+            <p class="text-muted">Real-time impact dashboard for Administration</p>
+        </div>
+        <button class="btn btn-dark rounded-pill px-4 shadow-sm">
+            <i class="fas fa-download me-2"></i> Download Report
+        </button>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 shadow text-white h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 opacity-75">Total Registered Workers</h6>
+                            <h2 class="display-4 fw-bold mb-0">{{ total_providers }}</h2>
+                        </div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                    <p class="mt-3 mb-0 small"><i class="fas fa-arrow-up"></i> Growing everyday</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow text-white h-100" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 15px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 opacity-75">Villages Covered</h6>
+                            <h2 class="display-4 fw-bold mb-0">{{ total_villages }}</h2>
+                        </div>
+                        <i class="fas fa-map-marked-alt fa-3x opacity-50"></i>
+                    </div>
+                    <p class="mt-3 mb-0 small">Expanding across Katni</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow text-white h-100" style="background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%); border-radius: 15px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 opacity-75">Active Services</h6>
+                            <h2 class="display-4 fw-bold mb-0">{{ total_categories }}</h2>
+                        </div>
+                        <i class="fas fa-tools fa-3x opacity-50"></i>
+                    </div>
+                    <p class="mt-3 mb-0 small">Diverse skills available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold m-0 text-secondary">Top Service Categories</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold m-0 text-secondary">Top Performing Villages</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="villageChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Category Chart
+    const ctx1 = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: {{ cat_labels|safe }}, // Python se Data aaya
+            datasets: [{
+                label: 'Number of Workers',
+                data: {{ cat_counts|safe }},
+                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // 2. Village Chart (Doughnut)
+    const ctx2 = document.getElementById('villageChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: {{ vil_labels|safe }},
+            datasets: [{
+                data: {{ vil_counts|safe }},
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                ],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+{% endblock %}

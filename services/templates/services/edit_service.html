@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-center mb-4">✏️ सर्विस एडिट करें (Edit Service)</h4>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.as_p }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success rounded-pill fw-bold">
+                                अपडेट करें (Update Profile)
+                            </button>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary rounded-pill">
+                                कैंसिल (Cancel)
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. State -> District
+    document.getElementById("id_state").addEventListener("change", function() {
+        var stateId = this.value;
+        var districtSelect = document.getElementById("id_district");
+        
+        fetch(`/ajax/load-districts/?state_id=${stateId}`)
+            .then(response => response.json())
+            .then(data => {
+                districtSelect.innerHTML = '<option value="">---------</option>';
+                data.forEach(district => {
+                    var option = document.createElement("option");
+                    option.value = district.id;
+                    option.text = district.name;
+                    districtSelect.appendChild(option);
+                });
+                document.getElementById("id_village").innerHTML = '<option value="">---------</option>';
+            });
+    });
+
+    // 2. District -> Village
+    document.getElementById("id_district").addEventListener("change", function() {
+        var districtId = this.value;
+        var villageSelect = document.getElementById("id_village");
+        
+        fetch(`/ajax/load-villages/?district_id=${districtId}`)
+            .then(response => response.json())
+            .then(data => {
+                villageSelect.innerHTML = '<option value="">---------</option>';
+                data.forEach(village => {
+                    var option = document.createElement("option");
+                    option.value = village.id;
+                    option.text = village.name;
+                    villageSelect.appendChild(option);
+                });
+            });
+    });
+</script>
+
+{% endblock %}

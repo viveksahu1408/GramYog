@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<script src="https://unpkg.com/htmx.org@1.9.4"></script>
+
+<div class="card border-0 shadow-sm mt-3">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3 text-success">📍 अपना गाँव चुनें</h5>
+        <p class="text-muted small">आप जिस गाँव को चुनेंगे, हम वहीं की सेवाएं दिखाएंगे।</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label class="form-label">राज्य (State)</label>
+                {{ form.state }}
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">जिला (District)</label>
+                {{ form.district }}
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">गाँव (Village)</label>
+                {{ form.village }}
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 rounded-pill">
+                Update Location
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

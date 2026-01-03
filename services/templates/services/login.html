@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-success">GramYog</h2>
+                <p class="text-muted">Login karke apna kaam sambhalein</p>
+            </div>
+
+            <div class="card border-0 shadow-lg" style="border-radius: 15px;">
+                <div class="card-body p-4">
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-danger py-2 small">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="fw-bold small mb-1">Mobile Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-phone"></i></span>
+                                <input type="number" name="username" class="form-control bg-light border-0" placeholder="Apna number dalein" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="fw-bold small mb-1">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-lock"></i></span>
+                                <input type="password" name="password" class="form-control bg-light border-0" placeholder="Password dalein" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success rounded-pill fw-bold shadow-sm">
+                                लॉग इन करें (Login)
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p class="small text-muted">Account nahi hai?</p>
+                        <a href="{% url 'register_provider' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                            Naya Register Karein
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
