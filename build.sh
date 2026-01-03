@@ -11,4 +11,8 @@ echo "from django.contrib.auth import get_user_model; User = get_user_model(); U
 # --- YE NAYI LINE HAI (Data Load karne ke liye) ---
 #python manage.py loaddata data.json
 
-python manage.py loaddata data.json || echo "⚠️ Data load failed, skipping..."
+#python manage.py loaddata data.json || echo "⚠️ Data load failed, skipping..."
+
+# --- YE NAYA CODE HAI (Data Load ke liye) ---
+# JSON ki jagah hum seedha Python Script chala rahe hain
+python manage.py shell < demo_setup.py
