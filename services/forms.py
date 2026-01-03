@@ -3,6 +3,14 @@ from .models import ServiceProvider, Category
 from locations.models import State,District, Village
 
 class ProviderRegistrationForm(forms.ModelForm):
+
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control', 
+            'placeholder': 'Apna Password banayein'
+        })
+    )
     class Meta:
         model = ServiceProvider
         fields = ['full_name', 'phone_number', 'category', 'state', 'district', 'village', 'profile_photo', 'description']
