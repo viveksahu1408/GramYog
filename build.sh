@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
-# Exit on error
 set -o errexit
 
-# Dependencies install karo
 pip install -r requirements.txt
-
-# Static files (CSS/Images) jama karo
 python manage.py collectstatic --no-input
-
-# Database migrate karo
 python manage.py migrate
+
+# --- Ye Naya Jugaad Hai (Admin Banane ke liye) ---
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin123') if not User.objects.filter(username='admin').exists() else print('Admin already exists')" | python manage.py shell
