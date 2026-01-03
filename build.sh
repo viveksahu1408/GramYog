@@ -9,4 +9,6 @@ python manage.py migrate
 echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin123') if not User.objects.filter(username='admin').exists() else print('Admin already exists')" | python manage.py shell
 
 # --- YE NAYI LINE HAI (Data Load karne ke liye) ---
-python manage.py loaddata data.json
+#python manage.py loaddata data.json
+
+python manage.py loaddata data.json || echo "⚠️ Data load failed, skipping..."
