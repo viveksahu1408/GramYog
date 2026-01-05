@@ -30,7 +30,7 @@
 <div class="row g-3">
     {% for cat in categories %}
     <div class="col-4 col-md-3 text-center">
-        <a href="{% url 'service_list_by_category' cat.slug %}" class="text-decoration-none">
+        <a href="{% url 'service_list' cat.slug %}" class="text-decoration-none">
             <div class="card border-0 shadow-sm h-100 py-3" style="border-radius: 15px; transition: transform 0.2s;">
                 <div class="card-body p-2">
                     
@@ -57,7 +57,8 @@
                             {% elif "Tent" in cat.name %}
                                 <i class="fas fa-campground fa-2x text-danger"></i>
                             {% else %}
-                                <i class="fas fa-briefcase fa-2x text-primary"></i> {% endif %}
+                                <i class="fas fa-briefcase fa-2x text-primary"></i>
+                            {% endif %}
                         </div>
                     {% endif %}
                     

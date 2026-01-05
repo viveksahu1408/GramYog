@@ -12,6 +12,8 @@ urlpatterns = [
     
     # Phir baki cheezen check karo (jaise Tractor category)
     path('', include('core.urls')),
+
+    path('dashboard/', include('dashboard.urls')),
 ]
 
 # Photo dikhane ke liye ye code bhi jod dena agar nahi joda to:
