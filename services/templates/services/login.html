@@ -1,21 +1,20 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
+        <div class="col-md-5">
             
-            <div class="text-center mb-4">
-                <h2 class="fw-bold text-success">GramYog</h2>
-                <p class="text-muted">Login karke apna kaam sambhalein</p>
-            </div>
-
-            <div class="card border-0 shadow-lg" style="border-radius: 15px;">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="card-header bg-success text-white text-center py-4" style="border-radius: 20px 20px 0 0;">
+                    <h3 class="fw-bold mb-0">स्वागत है 🙏</h3>
+                    <p class="mb-0 small opacity-75">GramYog mein login karein</p>
+                </div>
+                
                 <div class="card-body p-4">
-                    
                     {% if messages %}
                         {% for message in messages %}
-                        <div class="alert alert-danger py-2 small">{{ message }}</div>
+                        <div class="alert alert-danger py-2 small rounded-pill text-center">{{ message }}</div>
                         {% endfor %}
                     {% endif %}
 
@@ -23,37 +22,42 @@
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label class="fw-bold small mb-1">Mobile Number</label>
+                            <label class="fw-bold small mb-1 text-muted">Mobile Number</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-0"><i class="fas fa-phone"></i></span>
-                                <input type="number" name="username" class="form-control bg-light border-0" placeholder="Apna number dalein" required>
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-phone text-success"></i></span>
+                                <input type="number" name="username" class="form-control bg-light border-0 py-2" placeholder="Mobile Number" required>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="fw-bold small mb-1">Password</label>
+                            <label class="fw-bold small mb-1 text-muted">Password</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-0"><i class="fas fa-lock"></i></span>
-                                <input type="password" name="password" class="form-control bg-light border-0" placeholder="Password dalein" required>
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-lock text-success"></i></span>
+                                <input type="password" name="password" class="form-control bg-light border-0 py-2" placeholder="Password" required>
                             </div>
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-success rounded-pill fw-bold shadow-sm">
-                                लॉग इन करें (Login)
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow">
+                                लॉग इन (Login) <i class="fas fa-arrow-right ms-2"></i>
                             </button>
                         </div>
                     </form>
+                </div>
+                
+                <div class="text-center position-relative my-2">
+                    <hr class="w-75 mx-auto">
+                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted small">YA</span>
+                </div>
 
-                    <div class="text-center mt-4">
-                        <p class="small text-muted">Account nahi hai?</p>
-                        <a href="{% url 'register_provider' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                            Naya Register Karein
-                        </a>
-                    </div>
-
+                <div class="card-footer bg-white text-center pb-4 border-0" style="border-radius: 0 0 20px 20px;">
+                    <p class="text-muted small mb-2">Pehli baar aaye hain?</p>
+                    <a href="{% url 'register_provider' %}" class="btn btn-outline-primary rounded-pill w-100 fw-bold">
+                        <i class="fas fa-user-plus me-1"></i> नया खाता बनाएं (Register)
+                    </a>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

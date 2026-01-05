@@ -150,6 +150,27 @@ JAZZMIN_SETTINGS = {
     # Left Sidebar Menu ka order
     "order_with_respect_to": ["services", "locations", "auth"],
 
+    # --- YE HAI WO JADU (Dashboard Button) ---
+    "topmenu_links": [
+        # Admin Home
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        
+        # Ye raha tumhara Custom Dashboard Button
+        {
+            "name": "📊 Graphs & Dashboard", 
+            "url": "dashboard",  # Ye tumhare URL ka name='dashboard' hona chahiye
+            "permissions": ["auth.view_user"],
+            "new_window": True  # Nayi tab mein khulega
+        },
+        
+        # Website par wapas jane ka link
+        {"name": "View Live Site", "url": "home", "new_window": True},
+    ],
+    # -----------------------------------------
+
+    "show_sidebar": True,
+    "navigation_expanded": True,
+
     # Icons (FontAwesome use hote hain)
     "icons": {
         "auth": "fas fa-users-cog",

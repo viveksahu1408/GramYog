@@ -10,11 +10,12 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages # Error dikhane ke liye
 from django.contrib.auth import logout # <--- Ye import upar check kar lena
-
+from .models import ServiceProvider, Category # Category zaroor jod lena
 
 
 # 1. Registration Page dikhane wala View
 def register_provider(request):
+    
     if request.method == 'POST':
         form = ProviderRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -107,3 +108,32 @@ def login_view(request):
 def custom_logout(request):
     logout(request) # Server se user ko hatao
     return redirect('home') # Seedha Home page par bhej do
+
+# --- YE FUNCTIONS MISSING THE ---
+
+def service_list(request, category_slug=None):
+    category = None
+    categories = Category.objects.all()
+    services = ServiceProvider.objects.all()
+
+    # Agar Category select ki hai (e.g., Tractor)
+    if category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        services = services.filter(category=category)
+
+    # Location Filter (Agar session mein location set hai)
+    village_name = request.session.get('user_village_name')
+    if village_name:
+        # Hum check karenge ki kya provider usi gaon ka hai?
+        services = services.filter(village__name=village_name)
+
+    return render(request, 'core/service_list.html', {
+        'category': category,
+        'categories': categories,
+        'services': services
+    })
+
+def service_detail(request, pk):
+    service = get_object_or_404(ServiceProvider, pk=pk)
+    return render(request, 'core/service_detail.html', {'service': service})
+

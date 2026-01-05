@@ -1,127 +1,147 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="container py-4 mb-5">
+<div class="container py-3 mb-5">
     
-    <a href="javascript:history.back()" class="text-decoration-none text-dark mb-3 d-inline-block">
-        <i class="fas fa-arrow-left me-1"></i> वापस जाएं
+    <a href="javascript:history.back()" class="btn btn-sm btn-light rounded-circle shadow-sm mb-3 text-dark">
+        <i class="fas fa-arrow-left"></i>
     </a>
 
-    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 20px;">
+    <div class="card border-0 shadow-lg overflow-hidden position-relative" style="border-radius: 25px;">
         
-        <div class="bg-success" style="height: 100px; opacity: 0.8;"></div>
+        <div style="background: linear-gradient(135deg, #198754, #20c997); height: 130px; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 10px 10px;"></div>
+        </div>
         
-        <div class="card-body text-center" style="margin-top: -50px;">
-            <div class="bg-white p-2 rounded-circle d-inline-block shadow-sm">
-                {% if provider.profile_photo %}
-                    <img src="{{ provider.profile_photo.url }}" alt="profile" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
-                {% elif provider.category.icon %}
-                    <img src="{{ provider.category.icon.url }}" alt="icon" style="width: 100px; height: 100px; object-fit: contain;">
-                {% else %}
-                    <div class="d-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 100px; height: 100px;">
-                        <span class="fw-bold text-success display-4">{{ provider.full_name|slice:":1" }}</span>
-                    </div>
+        <div class="card-body text-center pt-0">
+            <div class="position-relative d-inline-block" style="margin-top: -65px;">
+                <div class="bg-white p-1 rounded-circle shadow">
+                    {% if provider.profile_photo %}
+                        <img src="{{ provider.profile_photo.url }}" class="rounded-circle border border-4 border-white" style="width: 120px; height: 120px; object-fit: cover;">
+                    {% elif provider.category.icon %}
+                        <img src="{{ provider.category.icon.url }}" class="rounded-circle border border-4 border-white bg-light" style="width: 120px; height: 120px; object-fit: contain; padding: 15px;">
+                    {% else %}
+                        <div class="rounded-circle border border-4 border-white bg-light d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                            <span class="fw-bold text-success display-4">{{ provider.full_name|slice:":1" }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if provider.is_verified %}
+                    <span class="position-absolute bottom-0 end-0 bg-primary text-white border border-2 border-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 30px; height: 30px;" title="Verified">
+                        <i class="fas fa-check" style="font-size: 0.8rem;"></i>
+                    </span>
                 {% endif %}
             </div>
 
-            <h3 class="fw-bold mt-3 mb-1">{{ provider.full_name }}</h3>
+            <h3 class="fw-bold mt-3 mb-1 text-dark">{{ provider.full_name }}</h3>
+            <div class="mb-3">
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
+                    <i class="fas fa-briefcase me-1"></i> {{ provider.category.name }}
+                </span>
+            </div>
             
-            <span class="badge bg-light text-dark border rounded-pill px-3 mb-2">
-                {{ provider.category.name }}
-            </span>
-            
-            {% if provider.is_verified %}
-                <span class="badge bg-primary rounded-pill ms-1">Verified <i class="fas fa-check-circle"></i></span>
-            {% endif %}
-            
-            <p class="text-muted mb-4 mt-2">
+            <p class="text-muted small mb-4">
                 <i class="fas fa-map-marker-alt text-danger me-1"></i> 
                 {{ provider.village.name }}, {{ provider.district.name }}
             </p>
 
-            <div class="d-grid gap-2 col-10 mx-auto">
-                <a href="tel:{{ provider.user.username }}" class="btn btn-success btn-lg rounded-pill shadow pulse-effect">
-                    <i class="fas fa-phone-alt me-2"></i> कॉल करें (Call Now)
-                </a>
-                
-                <a href="https://wa.me/91{{ provider.user.username }}" class="btn btn-outline-success btn-lg rounded-pill shadow-sm mt-2">
-                    <i class="fab fa-whatsapp me-2"></i> व्हाट्सएप (WhatsApp)
-                </a>
+            <div class="row g-2 px-2">
+                <div class="col-6">
+                    <a href="tel:{{ provider.user.username }}" class="btn btn-success w-100 rounded-pill shadow py-2 pulse-effect">
+                        <i class="fas fa-phone-alt me-2"></i> Call
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a href="https://wa.me/91{{ provider.user.username }}" class="btn btn-outline-success w-100 rounded-pill shadow-sm py-2">
+                        <i class="fab fa-whatsapp me-2"></i> Chat
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm mt-3" style="border-radius: 15px;">
-        <div class="card-body">
-            <h6 class="fw-bold text-secondary mb-3">विवरण (Description)</h6>
-            <p class="text-muted mb-0">
+    <div class="card border-0 shadow-sm mt-3" style="border-radius: 20px;">
+        <div class="card-body p-4">
+            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-info-circle text-warning me-2"></i>मेरे बारे में</h6>
+            <p class="text-muted mb-0 small" style="line-height: 1.6;">
                 {% if provider.description %}
                     {{ provider.description }}
                 {% else %}
-                    इस सर्विस प्रोवाइडर ने अभी कोई विवरण नहीं दिया है.
+                    <span class="fst-italic opacity-50">इस दुकानदार ने अभी अपने बारे में कुछ नहीं लिखा है.</span>
                 {% endif %}
             </p>
         </div>
     </div>
-    <div class="card border-0 shadow-sm mt-3 mb-4" style="border-radius: 15px;">
-        <div class="card-body">
-            <h6 class="fw-bold text-secondary mb-3">⭐ रिव्यु और रेटिंग (Reviews)</h6>
+
+    <div class="card border-0 shadow-sm mt-3 mb-4" style="border-radius: 20px;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-dark m-0">⭐ रिव्यु (Reviews)</h6>
+                <span class="badge bg-light text-dark">Total: {{ reviews.count }}</span>
+            </div>
 
             {% if request.user.is_authenticated %}
-            <form method="POST" class="mb-4 bg-light p-3 rounded">
-                {% csrf_token %}
-                <label class="small fw-bold mb-2">Review लिखें:</label>
-                
-                <div class="mb-2">
-                    <select name="rating" class="form-select form-select-sm w-auto d-inline-block">
-                        <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
-                        <option value="4">⭐⭐⭐⭐ (Good)</option>
-                        <option value="3">⭐⭐⭐ (Average)</option>
-                        <option value="2">⭐⭐ (Poor)</option>
-                        <option value="1">⭐ (Bad)</option>
-                    </select>
-                </div>
-                
-                <textarea name="comment" class="form-control mb-2" rows="2" placeholder="अपना अनुभव लिखें..." required></textarea>
-                <button type="submit" class="btn btn-sm btn-dark rounded-pill">Submit Review</button>
-            </form>
-            {% else %}
-                <p class="text-muted small">
-                    <a href="{% url 'register_provider' %}" class="text-success fw-bold">Login</a> karke review den.
-                </p>
+            <div class="bg-light p-3 rounded-3 mb-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="small fw-bold me-2">Rate:</span>
+                        <div class="rating">
+                            <select name="rating" class="form-select form-select-sm border-0 shadow-sm" style="width: 100px;">
+                                <option value="5">5 ⭐</option>
+                                <option value="4">4 ⭐</option>
+                                <option value="3">3 ⭐</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input name="comment" class="form-control border-0 shadow-sm" placeholder="कैसा लगा काम?..." required style="border-radius: 20px 0 0 20px;">
+                        <button type="submit" class="btn btn-dark px-3 shadow-sm" style="border-radius: 0 20px 20px 0;">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
             {% endif %}
 
-            {% for review in reviews %}
-            <div class="border-bottom pb-2 mb-2">
-                <div class="d-flex justify-content-between">
-                    <span class="fw-bold small">{{ review.user.username }}</span>
-                    <span class="text-warning small">
-                        {% if review.rating == 5 %}⭐⭐⭐⭐⭐
-                        {% elif review.rating == 4 %}⭐⭐⭐⭐
-                        {% elif review.rating == 3 %}⭐⭐⭐
-                        {% elif review.rating == 2 %}⭐⭐
-                        {% else %}⭐
-                        {% endif %}
-                    </span>
+            <div class="review-list">
+                {% for review in reviews %}
+                <div class="d-flex mb-3">
+                    <div class="flex-shrink-0">
+                        <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                            {{ review.user.username|slice:":1" }}
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3 border-bottom pb-3">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-0 small fw-bold">{{ review.user.username }}</h6>
+                            <small class="text-warning">
+                                {% if review.rating >= 4 %}⭐⭐⭐⭐⭐{% else %}⭐⭐⭐{% endif %}
+                            </small>
+                        </div>
+                        <p class="text-muted small mb-1 mt-1">{{ review.comment }}</p>
+                        <small class="text-black-50" style="font-size: 0.65rem;">{{ review.created_at|date:"d M, Y" }}</small>
+                    </div>
                 </div>
-                <p class="text-muted small mb-0">{{ review.comment }}</p>
-                <small class="text-black-50" style="font-size: 0.6rem;">{{ review.created_at|date:"d M Y" }}</small>
+                {% empty %}
+                <div class="text-center py-3">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1170/1170679.png" width="50" class="opacity-25 mb-2">
+                    <p class="text-muted small">अभी कोई रिव्यु नहीं है.</p>
+                </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <p class="text-muted small text-center">अभी कोई रिव्यु नहीं है. पहले आप बनें! 🚀</p>
-            {% endfor %}
         </div>
     </div>
-
 </div>
 
 <style>
+    /* Pulse Effect for Call Button */
     .pulse-effect {
         animation: pulse 2s infinite;
     }
     @keyframes pulse {
         0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
-        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); }
+        70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); }
         100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
     }
 </style>

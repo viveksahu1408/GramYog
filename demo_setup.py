@@ -5,6 +5,8 @@ print("🚀 Demo Data banana shuru...")
 
 # 1. State Banao
 mp, created = State.objects.get_or_create(name="Madhya Pradesh")
+up, created = State.objects.get_or_create(name="Uttar Pradesh")
+
 
 # 2. Districts Banao
 katni, _ = District.objects.get_or_create(name="Katni", state=mp)
