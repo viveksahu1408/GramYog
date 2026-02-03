@@ -8,58 +8,57 @@
         {% if category %}
             {{ category.name }}
         {% else %}
-            Searching: "{{ query }}"
+            Searching: "{{ request.GET.q }}"
         {% endif %}
-        <span class="text-muted small">({{ providers.count }})</span>
     </h5>
 </div>
 
-<div class="d-flex gap-2 mb-3 overflow-auto" style="white-space: nowrap;">
-    <button class="btn btn-sm btn-outline-success rounded-pill active">📍 मेरे गाँव में</button>
+<div class="d-flex gap-2 mb-4 overflow-auto" style="white-space: nowrap;">
+    <button class="btn btn-sm btn-success rounded-pill active shadow-sm">📍 मेरे गाँव में</button>
+    <button class="btn btn-sm btn-outline-secondary rounded-pill">🚜 आस-पास (Padosi)</button>
     <button class="btn btn-sm btn-outline-secondary rounded-pill">⭐ Top Rated</button>
-    <button class="btn btn-sm btn-outline-secondary rounded-pill">💰 सबसे सस्ता</button>
 </div>
 
-<div class="row g-3">
-    {% for provider in providers %}
+{% if local_providers %}
+<h6 class="fw-bold text-success mb-3 px-1">
+    <i class="fas fa-map-marker-alt me-1"></i> आपके गाँव में ({{ local_providers|length }})
+</h6>
+
+<div class="row g-3 mb-4">
+    {% for provider in local_providers %}
     <div class="col-12 col-md-6">
         <div class="card border-0 shadow-sm p-2" style="border-radius: 15px;">
             <div class="d-flex align-items-center">
                 
                 <a href="{% url 'service_detail' provider.id %}" class="d-flex align-items-center flex-grow-1 text-decoration-none text-dark">
-                    
                     <div class="me-3">
                         {% if provider.profile_photo %}
                             <img src="{{ provider.profile_photo.url }}" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
-                         {% else %}
+                        {% else %}
                             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                {% if provider.category.icon %}
-                                    <img src="{{ provider.category.icon.url }}" style="width: 30px; height: 30px; object-fit: contain;">
-                                {% else %}
-                                    <span class="fw-bold text-success fs-4">{{ provider.full_name|slice:":1" }}</span>
-                                {% endif %}
+                                <span class="fw-bold text-success fs-4">{{ provider.full_name|slice:":1" }}</span>
                             </div>
-                         {% endif %}
+                        {% endif %}
                     </div>
                     
                     <div class="flex-grow-1">
                         <div class="d-flex justify-content-between">
-                            <h6 class="fw-bold mb-0">{{ provider.full_name }}</h6>
+                            <h6 class="fw-bold mb-0">{{ provider.business_name|default:provider.full_name }}</h6>
                             {% if provider.is_verified %}
                                 <i class="fas fa-check-circle text-primary small" title="Verified"></i>
                             {% endif %}
                         </div>
                         <small class="text-muted d-block" style="font-size: 0.8rem;">
-                            <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ provider.village.name }}
+                            <i class="fas fa-user me-1"></i> {{ provider.full_name }}
                         </small>
-                        <small class="text-warning" style="font-size: 0.75rem;">
-                            <i class="fas fa-star"></i> 4.5 (12 Reviews)
+                        <small class="text-success fw-bold" style="font-size: 0.75rem;">
+                            <i class="fas fa-check"></i> Available Here
                         </small>
                     </div>
-
                 </a>
+
                 <div class="ms-2">
-                    <a href="tel:{{ provider.user.username }}" class="btn btn-success rounded-circle shadow pulse-effect" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+                    <a href="tel:{{ provider.mobile }}" class="btn btn-success rounded-circle shadow pulse-effect" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-phone-alt text-white"></i>
                     </a>
                 </div>
@@ -67,18 +66,78 @@
             </div>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12 text-center mt-5">
-        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-        <h6 class="text-muted">अरे! इस कैटेगरी में अभी कोई नहीं है।</h6>
-        <p class="small text-secondary">शायद आपके गाँव में अभी रजिस्ट्रेशन नहीं हुआ।</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+{% if nearby_providers %}
+<h6 class="fw-bold text-primary mb-3 px-1 mt-2">
+    <i class="fas fa-route me-1"></i> आस-पास के गाँव ({{ nearby_providers|length }})
+</h6>
+
+<div class="row g-3">
+    {% for provider in nearby_providers %}
+    <div class="col-12 col-md-6">
+        <div class="card border-0 shadow-sm p-2" style="border-radius: 15px; background-color: #f8f9fa;">
+            <div class="d-flex align-items-center">
+                
+                <a href="{% url 'service_detail' provider.id %}" class="d-flex align-items-center flex-grow-1 text-decoration-none text-dark">
+                    <div class="me-3">
+                        {% if provider.profile_photo %}
+                            <img src="{{ provider.profile_photo.url }}" class="rounded-circle grayscale-img" style="width: 60px; height: 60px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <span class="fw-bold text-secondary fs-4">{{ provider.full_name|slice:":1" }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold mb-0">{{ provider.business_name|default:provider.full_name }}</h6>
+                            <span class="badge bg-warning text-dark shadow-sm" style="font-size: 0.7rem;">
+                                {{ provider.distance_km }} km
+                            </span>
+                        </div>
+                        <small class="text-muted d-block" style="font-size: 0.8rem;">
+                            <i class="fas fa-user me-1"></i> {{ provider.full_name }}
+                        </small>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">
+                            <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ provider.village.name }}
+                        </small>
+                    </div>
+                </a>
+
+                <div class="ms-2">
+                    <a href="tel:{{ provider.mobile }}" class="btn btn-outline-primary rounded-circle shadow-sm" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-phone-alt"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
     </div>
     {% endfor %}
 </div>
+{% endif %}
+
+{% if not local_providers and not nearby_providers %}
+<div class="col-12 text-center mt-5">
+    <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+        <i class="fas fa-search fa-3x text-muted"></i>
+    </div>
+    <h6 class="text-dark fw-bold">अरे! यहाँ कोई नहीं मिला।</h6>
+    <p class="small text-secondary px-4">
+        इस कैटेगरी में आपके गाँव या आस-पास अभी कोई रजिस्टर्ड नहीं है।
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-outline-dark btn-sm rounded-pill px-4">Go Back</a>
+</div>
+{% endif %}
 
 <style>
-    .pulse-effect:active {
-        transform: scale(0.95);
-    }
+    .pulse-effect:active { transform: scale(0.95); }
+    .grayscale-img { filter: grayscale(30%); }
 </style>
+
 {% endblock %}

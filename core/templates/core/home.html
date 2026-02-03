@@ -22,6 +22,38 @@
     </div>
 </form>
 
+{% if active_notices %}
+<div class="alert alert-warning border-0 shadow-sm d-flex align-items-center p-2 mb-4" style="border-radius: 10px; background-color: #fff3cd;">
+    
+    <span class="badge bg-danger me-2 blink_me" style="font-size: 0.7rem; min-width: 80px;">
+        📢 NEW UPDATES
+    </span>
+
+    <marquee scrollamount="6" class="fw-bold text-dark small mb-0" style="width: 100%;" onmouseover="this.stop();" onmouseout="this.start();">
+        
+        {% for n in active_notices %}
+            <span class="me-4">
+                {% if n.level == 'DISTRICT' %}
+                    <span class="text-danger">[ZILA]</span>
+                {% else %}
+                    <span class="text-primary">[GRAM]</span>
+                {% endif %}
+                
+                {{ n.title }}
+            </span>
+            
+            <i class="fas fa-circle text-secondary me-4" style="font-size: 4px; vertical-align: middle;"></i>
+        {% endfor %}
+
+    </marquee>
+</div>
+
+<style>
+    .blink_me { animation: blinker 1.5s linear infinite; }
+    @keyframes blinker { 50% { opacity: 0; } }
+</style>
+{% endif %}
+
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h6 class="fw-bold m-0 text-secondary">सेवाएं (Services)</h6>
     <a href="{% url 'service_list' %}" class="text-success text-decoration-none small fw-bold">सभी देखें</a>
@@ -74,7 +106,7 @@
     <h6 class="fw-bold mb-3 text-secondary">महत्वपूर्ण योजनाएं</h6>
     
     <a href="{% url 'schemes' %}" class="text-decoration-none text-dark">
-        <div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center" style="border-radius: 12px;">
+        <div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center mb-3" style="border-radius: 12px;">
             <div class="bg-warning text-white rounded p-3 me-3">
                 <i class="fas fa-female fa-lg"></i>
             </div>

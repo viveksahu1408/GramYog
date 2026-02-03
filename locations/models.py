@@ -29,3 +29,24 @@ class Village(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+# locations/models.py
+
+class VillageDistance(models.Model):
+    # Kahan se? (Main Gaon)
+    from_village = models.ForeignKey(Village, related_name='neighbors', on_delete=models.CASCADE)
+    
+    # Kahan tak? (Padosi Gaon)
+    to_village = models.ForeignKey(Village, related_name='neighbor_of', on_delete=models.CASCADE)
+    
+    # Kitni door? (Km mein)
+    distance_km = models.FloatField(verbose_name="Doori (KM)")
+
+    class Meta:
+        # Ek rishta do baar na ban jaye (Shivrajpur -> Badkhera ek hi baar ho)
+        unique_together = ('from_village', 'to_village')
+        ordering = ['distance_km'] # Jo paas hai wo pehle aayega
+
+    def __str__(self):
+        return f"{self.from_village} -> {self.to_village} ({self.distance_km} km)"    

@@ -6,41 +6,78 @@ from locations.models import Village
 from django.shortcuts import render, redirect  # <--- 'redirect' yahan add kar de
 from django.db.models import Count # <--- Ye zaroori h ginti karne ke liye
 from services.models import Review
-from .models import Scheme
+from .models import Scheme,Notice
 from django.http import JsonResponse
 from locations.models import District, Village
+from locations.models import VillageDistance
+
 
 def home(request):
     # Database se saari categories uthao
     categories = Category.objects.all()
+
+    #notice ke liye 
+    user_village_name = request.session.get('user_village_name')
+    notices = Notice.objects.filter(is_active=True).order_by('-created_at')
+    # Filhal simple rakhte hain: Jo sabse naya notice hai wo dikha do
+    # (Baad mein complex logic laga lenge)
+    active_notices = Notice.objects.filter(is_active=True).order_by('-created_at')    
     
     context = {
-        'categories': categories
+        'categories': categories,
+        'active_notices': active_notices
     }
     return render(request, 'core/home.html', context)
 
 def service_list(request, category_slug):
-    # 1. Kaunsi category click ki gayi?
+    # 1. Category dhundo
     category = get_object_or_404(Category, slug=category_slug)
     
-    # 2. Us category ke providers dhundo
-    providers = ServiceProvider.objects.filter(category=category, is_available=True)
+    # 2. Base Query: Us category ke saare available log
+    all_providers = ServiceProvider.objects.filter(category=category, is_available=True)
     
-    # --- YE FILTER JODA HAI (LOCATION LOGIC) ---
-    # Check karo session me koi gaon saved hai kya?
+    # Session se gaon nikalo
     user_village_id = request.session.get('user_village_id')
     
-    if user_village_id:
-        # Agar haan, to sirf usi gaon ke providers filter karo
-        providers = providers.filter(village_id=user_village_id)
+    local_providers = []
+    nearby_providers = []
 
+    if user_village_id:
+        # --- LOGIC A: LOCAL (Apne Gaon Wale) ---
+        local_providers = all_providers.filter(village_id=user_village_id)
+        
+        # --- LOGIC B: NEARBY (Padosi Gaon Wale) ---
+        # Padosi table se dhundo ki mere gaon ke paas kaun hai
+        distances = VillageDistance.objects.filter(from_village_id=user_village_id)
+        
+        # Ek naksha (Map) banao: {Gaon_ID : Doori_KM}
+        # Example: {Badkhera_ID: 2.0, Juhi_ID: 5.0}
+        village_dist_map = {d.to_village.id: d.distance_km for d in distances}
+        
+        # Ab wo providers dhundo jo in padosi gaon mein rehte hain
+        # (Lekin Local walon ko dubara mat gino, isliye exclude user_village_id)
+        neighbors = all_providers.filter(village_id__in=village_dist_map.keys()).exclude(village_id=user_village_id)
+        
+        # Har provider ke kandhe par 'distance' ka badge lagao
+        for p in neighbors:
+            p.distance_km = village_dist_map.get(p.village.id)
+            nearby_providers.append(p)
+            
+        # Sort kar do: Jo sabse paas hai wo sabse upar
+        nearby_providers.sort(key=lambda x: x.distance_km)
+        
+    else:
+        # Agar user ne gaon select nahi kiya, to sabko local mein dikha do
+        local_providers = all_providers
 
     context = {
         'category': category,
-        'providers': providers
+        'local_providers': local_providers,   # List 1: Apne log
+        'nearby_providers': nearby_providers, # List 2: Padosi log
     }
-    return render(request, 'core/service_list.html', context)    
+    return render(request, 'core/service_list.html', context)  
 #this is for search anything
+
 def search(request):
     query = request.GET.get('q') # Search box me kya likha tha?
     providers = []
@@ -116,10 +153,14 @@ def dashboard(request):
     return render(request, 'core/dashboard.html', context)
 
 
-#service provider ki details page
 def service_detail(request, pk):
     provider = get_object_or_404(ServiceProvider, pk=pk)
     
+    # --- 1. NEW ADDITION: Products (Dukaan Logic) ---
+    # Hum active products nikal rahe hain taaki template mein dikha sakein
+    products = provider.products.filter(is_available=True)
+
+    # --- 2. EXISTING CODE: Review Submission ---
     # Agar Form Submit hua hai (Review likha hai)
     if request.method == 'POST' and request.user.is_authenticated:
         rating = request.POST.get('rating')
@@ -134,14 +175,17 @@ def service_detail(request, pk):
         )
         return redirect('service_detail', pk=pk) # Page refresh karo
 
+    # --- 3. EXISTING CODE: Fetch Reviews ---
     # Purane reviews lekar aao
     reviews = provider.reviews.all().order_by('-created_at')
     
     context = {
         'provider': provider,
         'reviews': reviews,
+        'products': products, # <--- Ye naya joda hai context mein
     }
     return render(request, 'core/service_detail.html', context)
+
 
 #schemes ke liye h ye to 
 def schemes(request):

@@ -1,9 +1,7 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="container py-3 mb-5">
-    
-    <a href="javascript:history.back()" class="btn btn-sm btn-light rounded-circle shadow-sm mb-3 text-dark">
+<div class="container py-3 mb-5"> <a href="javascript:history.back()" class="btn btn-sm btn-light rounded-circle shadow-sm mb-3 text-dark">
         <i class="fas fa-arrow-left"></i>
     </a>
 
@@ -18,11 +16,9 @@
                 <div class="bg-white p-1 rounded-circle shadow">
                     {% if provider.profile_photo %}
                         <img src="{{ provider.profile_photo.url }}" class="rounded-circle border border-4 border-white" style="width: 120px; height: 120px; object-fit: cover;">
-                    {% elif provider.category.icon %}
-                        <img src="{{ provider.category.icon.url }}" class="rounded-circle border border-4 border-white bg-light" style="width: 120px; height: 120px; object-fit: contain; padding: 15px;">
                     {% else %}
                         <div class="rounded-circle border border-4 border-white bg-light d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
-                            <span class="fw-bold text-success display-4">{{ provider.full_name|slice:":1" }}</span>
+                            <span class="fw-bold text-success display-4">{{ provider.business_name|slice:":1" }}</span>
                         </div>
                     {% endif %}
                 </div>
@@ -34,6 +30,8 @@
             </div>
 
             <h3 class="fw-bold mt-3 mb-1 text-dark">{{ provider.full_name }}</h3>
+            <p class="text-muted small mb-2"><i class="fas fa-user me-1"></i> {{ provider.full_name }}</p>
+
             <div class="mb-3">
                 <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
                     <i class="fas fa-briefcase me-1"></i> {{ provider.category.name }}
@@ -42,42 +40,66 @@
             
             <p class="text-muted small mb-4">
                 <i class="fas fa-map-marker-alt text-danger me-1"></i> 
-                {{ provider.village.name }}, {{ provider.district.name }}
+                {{ provider.village.name }}
             </p>
 
-            <div class="row g-2 px-2">
-                <div class="col-6">
-                    <a href="tel:{{ provider.user.username }}" class="btn btn-success w-100 rounded-pill shadow py-2 pulse-effect">
-                        <i class="fas fa-phone-alt me-2"></i> Call
-                    </a>
-                </div>
-                <div class="col-6">
-                    <a href="https://wa.me/91{{ provider.user.username }}" class="btn btn-outline-success w-100 rounded-pill shadow-sm py-2">
-                        <i class="fab fa-whatsapp me-2"></i> Chat
-                    </a>
-                </div>
             </div>
-        </div>
     </div>
 
     <div class="card border-0 shadow-sm mt-3" style="border-radius: 20px;">
         <div class="card-body p-4">
             <h6 class="fw-bold text-dark mb-3"><i class="fas fa-info-circle text-warning me-2"></i>मेरे बारे में</h6>
             <p class="text-muted mb-0 small" style="line-height: 1.6;">
-                {% if provider.description %}
-                    {{ provider.description }}
-                {% else %}
-                    <span class="fst-italic opacity-50">इस दुकानदार ने अभी अपने बारे में कुछ नहीं लिखा है.</span>
-                {% endif %}
+                {{ provider.description|default:"इन्होंने अभी अपने बारे में कुछ नहीं लिखा है." }}
             </p>
         </div>
     </div>
 
+    {% if products %}
+    <div class="card border-0 shadow-sm mt-3" style="border-radius: 20px;">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+                    <i class="fas fa-shopping-basket small"></i>
+                </div>
+                <h6 class="fw-bold m-0 text-dark">मेरी दुकान (Store)</h6>
+            </div>
+
+            <div class="row g-3">
+                {% for product in products %}
+                <div class="col-6 col-md-4">
+                    <div class="card border border-light shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
+                        <div style="height: 120px; position: relative;">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="w-100 h-100" style="object-fit: cover;">
+                            {% else %}
+                                <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-box text-muted fa-2x"></i>
+                                </div>
+                            {% endif %}
+                            <span class="badge bg-dark position-absolute bottom-0 start-0 m-2 shadow-sm">
+                                ₹{{ product.price }}
+                            </span>
+                        </div>
+                        <div class="card-body p-2 text-center">
+                            <h6 class="fw-bold text-dark mb-1 small text-truncate">{{ product.name }}</h6>
+                            <a href="https://wa.me/91{{ provider.mobile }}?text=नमस्ते {{ provider.name }} जी, मुझे आपका '{{ product.name }}' (₹{{ product.price }}) खरीदना है।" 
+                               class="btn btn-outline-success btn-sm w-100 rounded-pill mt-1" target="_blank" style="font-size: 0.75rem;">
+                                Order
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="card border-0 shadow-sm mt-3 mb-4" style="border-radius: 20px;">
         <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold text-dark m-0">⭐ रिव्यु (Reviews)</h6>
-                <span class="badge bg-light text-dark">Total: {{ reviews.count }}</span>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark m-0">⭐ रिव्यु ({{ reviews.count }})</h6>
             </div>
 
             {% if request.user.is_authenticated %}
@@ -85,20 +107,15 @@
                 <form method="POST">
                     {% csrf_token %}
                     <div class="d-flex align-items-center mb-2">
-                        <span class="small fw-bold me-2">Rate:</span>
-                        <div class="rating">
-                            <select name="rating" class="form-select form-select-sm border-0 shadow-sm" style="width: 100px;">
-                                <option value="5">5 ⭐</option>
-                                <option value="4">4 ⭐</option>
-                                <option value="3">3 ⭐</option>
-                            </select>
-                        </div>
+                        <select name="rating" class="form-select form-select-sm border-0 shadow-sm w-auto">
+                            <option value="5">5 ⭐</option>
+                            <option value="4">4 ⭐</option>
+                            <option value="3">3 ⭐</option>
+                        </select>
                     </div>
                     <div class="input-group">
-                        <input name="comment" class="form-control border-0 shadow-sm" placeholder="कैसा लगा काम?..." required style="border-radius: 20px 0 0 20px;">
-                        <button type="submit" class="btn btn-dark px-3 shadow-sm" style="border-radius: 0 20px 20px 0;">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <input name="comment" class="form-control border-0 shadow-sm" placeholder="Review..." required>
+                        <button type="submit" class="btn btn-dark shadow-sm"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </form>
             </div>
@@ -106,39 +123,39 @@
 
             <div class="review-list">
                 {% for review in reviews %}
-                <div class="d-flex mb-3">
+                <div class="d-flex mb-3 border-bottom pb-2">
                     <div class="flex-shrink-0">
-                        <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                        <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.8rem;">
                             {{ review.user.username|slice:":1" }}
                         </div>
                     </div>
-                    <div class="flex-grow-1 ms-3 border-bottom pb-3">
+                    <div class="flex-grow-1 ms-3">
                         <div class="d-flex justify-content-between">
                             <h6 class="mb-0 small fw-bold">{{ review.user.username }}</h6>
-                            <small class="text-warning">
-                                {% if review.rating >= 4 %}⭐⭐⭐⭐⭐{% else %}⭐⭐⭐{% endif %}
-                            </small>
+                            <small class="text-warning">{% if review.rating >= 4 %}⭐⭐⭐⭐⭐{% else %}⭐⭐⭐{% endif %}</small>
                         </div>
-                        <p class="text-muted small mb-1 mt-1">{{ review.comment }}</p>
-                        <small class="text-black-50" style="font-size: 0.65rem;">{{ review.created_at|date:"d M, Y" }}</small>
+                        <p class="text-muted small mb-0">{{ review.comment }}</p>
                     </div>
                 </div>
                 {% empty %}
-                <div class="text-center py-3">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1170/1170679.png" width="50" class="opacity-25 mb-2">
-                    <p class="text-muted small">अभी कोई रिव्यु नहीं है.</p>
-                </div>
+                <p class="text-muted small text-center">No reviews yet.</p>
                 {% endfor %}
             </div>
         </div>
     </div>
 </div>
 
+<div class="fixed-bottom bg-white shadow-lg p-3 border-top d-flex gap-2 justify-content-center" style="border-radius: 20px 20px 0 0; max-width: 600px; margin: 0 auto;">
+    <a href="tel:{{ provider.mobile }}" class="btn btn-success flex-grow-1 rounded-pill fw-bold py-2 pulse-effect shadow">
+        <i class="fas fa-phone-alt me-2"></i> कॉल करें
+    </a>
+    <a href="https://wa.me/91{{ provider.mobile }}" class="btn btn-outline-success flex-grow-1 rounded-pill fw-bold py-2 shadow-sm">
+        <i class="fab fa-whatsapp me-2"></i> चैट करें
+    </a>
+</div>
+
 <style>
-    /* Pulse Effect for Call Button */
-    .pulse-effect {
-        animation: pulse 2s infinite;
-    }
+    .pulse-effect { animation: pulse 2s infinite; }
     @keyframes pulse {
         0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
         70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); }
